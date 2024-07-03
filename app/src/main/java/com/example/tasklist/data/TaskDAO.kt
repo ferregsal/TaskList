@@ -16,6 +16,7 @@ class TaskDAO(context: Context) {
         val values = ContentValues()
         values.put(Task.COLUMN_NAME_TITLE, task.name)
         values.put(Task.COLUMN_NAME_DONE, task.done)
+        values.put(Task.COLUMN_NAME_PARENT_ID, task.parentId)
 
         val newRowId = db.insert(Task.TABLE_NAME, null, values)
         task.id = newRowId.toInt()
@@ -27,6 +28,7 @@ class TaskDAO(context: Context) {
         val values = ContentValues()
         values.put(Task.COLUMN_NAME_TITLE, task.name)
         values.put(Task.COLUMN_NAME_DONE, task.done)
+        values.put(Task.COLUMN_NAME_PARENT_ID, task.parentId)
 
         val updatedRows = db.update(
             Task.TABLE_NAME,
@@ -45,7 +47,7 @@ class TaskDAO(context: Context) {
     fun find(id: Int) : Task? {
         val db = databaseManager.readableDatabase
 
-        val projection = arrayOf(BaseColumns._ID, Task.COLUMN_NAME_TITLE, Task.COLUMN_NAME_DONE)
+        val projection = arrayOf(BaseColumns._ID, Task.COLUMN_NAME_TITLE, Task.COLUMN_NAME_DONE, Task.COLUMN_NAME_PARENT_ID )
 
         val cursor = db.query(
             Task.TABLE_NAME,                        // The table to query
@@ -62,6 +64,7 @@ class TaskDAO(context: Context) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_TITLE))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_DONE)) == 1
+
             task = Task(id, name, done)
         }
         cursor.close()
@@ -72,7 +75,7 @@ class TaskDAO(context: Context) {
     fun findAll() : List<Task> {
         val db = databaseManager.readableDatabase
 
-        val projection = arrayOf(BaseColumns._ID, Task.COLUMN_NAME_TITLE, Task.COLUMN_NAME_DONE)
+        val projection = arrayOf(BaseColumns._ID, Task.COLUMN_NAME_TITLE, Task.COLUMN_NAME_DONE, Task.COLUMN_NAME_PARENT_ID )
 
         val cursor = db.query(
             Task.TABLE_NAME,                        // The table to query
@@ -89,7 +92,8 @@ class TaskDAO(context: Context) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_TITLE))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_DONE)) == 1
-            val task = Task(id, name, done)
+            val parentId = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_PARENT_ID)).takeIf { it != 0 }
+            val task = Task(id, name, done, parentId)
             tasks.add(task)
         }
         cursor.close()

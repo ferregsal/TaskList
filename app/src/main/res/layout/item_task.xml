@@ -5,8 +5,13 @@
     android:orientation="horizontal"
     android:layout_gravity="center_vertical"
     >
-
+    <LinearLayout
+        android:id="@+id/deleteLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
     <CheckBox
+        android:id="@+id/taskCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -25,6 +30,7 @@
         />
 
     <ImageButton
+        android:id="@+id/deleteImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/delete_icon"
@@ -34,6 +40,44 @@
         android:contentDescription="Delete Task"
 
         />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/saveLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        >
+        <CheckBox
+            android:id="@+id/taskAltCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            />
+        <EditText
+            android:id="@+id/taskEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:text="Task"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+
+
+            android:textStyle="bold"
+            />
+
+        <ImageButton
+            android:id="@+id/saveImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/save_icon"
+            android:background="@color/white"
+            android:layout_gravity="center_vertical"
+
+            android:contentDescription="Delete Task"
+
+            />
+    </LinearLayout>
 
 
 </LinearLayout>
