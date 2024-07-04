@@ -2,13 +2,11 @@ package com.example.tasklist.data
 
 import android.provider.BaseColumns
 
-data class Task(var id: Int, var name: String, var done: Boolean = false, var categoryId: Int?=null, var priority:Int) {
+data class Category(var id: Int, var name: String, var priority: Int) {
 
     companion object {
-        const val TABLE_NAME = "Tasks"
+        const val TABLE_NAME = "Categories"
         const val COLUMN_NAME_TITLE = "name"
-        const val COLUMN_NAME_DONE = "done"
-        const val COLUMN_NAME_CATEGORY_ID = "parentId"
         const val COLUMN_NAME_PRIORITY = "priority"
 
 
@@ -16,8 +14,6 @@ data class Task(var id: Int, var name: String, var done: Boolean = false, var ca
             "CREATE TABLE $TABLE_NAME (" +
                     "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMN_NAME_TITLE TEXT," +
-                    "$COLUMN_NAME_DONE INTEGER,"+
-                    "$COLUMN_NAME_CATEGORY_ID INTEGER,"+
                     "$COLUMN_NAME_PRIORITY INTEGER)"
 
         const val SQL_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"

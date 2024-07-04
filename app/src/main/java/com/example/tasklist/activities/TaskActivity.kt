@@ -22,7 +22,7 @@ class TaskActivity : AppCompatActivity() {
 
         binding.newTaskButton.setOnClickListener {
             val taskName = binding.newTaskEditText.text.toString()
-            val task = Task(-1, taskName)
+            val task = Task(-1, taskName, priority = 1)
             taskDAO.insert(task)
             Toast.makeText(this, "Tarea guardada correctamente", Toast.LENGTH_SHORT).show()
             finish()

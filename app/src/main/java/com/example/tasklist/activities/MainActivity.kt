@@ -1,6 +1,7 @@
 package com.example.tasklist.activities
 
 
+import CategoryDAO
 import TaskDAO
 import android.content.DialogInterface
 import android.content.Intent
@@ -11,23 +12,23 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tasklist.R
-import com.example.tasklist.adapters.TaskAdapter
-import com.example.tasklist.data.Task
+import com.example.tasklist.adapters.CategoryAdapter
+import com.example.tasklist.data.Category
 import com.example.tasklist.databinding.ActivityMainBinding
-import com.example.tasklist.databinding.ItemTaskBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    lateinit var taskRecyclerView: RecyclerView
-    lateinit var addTaskButton: FloatingActionButton
-    private lateinit var taskAdapter: TaskAdapter
-    lateinit var taskList: List<Task>
-    lateinit var taskDAO: TaskDAO
+    lateinit var categoryRecyclerView: RecyclerView
+    lateinit var addCategoryButton: FloatingActionButton
+    private lateinit var categoryAdapter: CategoryAdapter
+    lateinit var categoryList: List<Category>
+    lateinit var categoryDAO: CategoryDAO
     lateinit var deleteLayout:LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,38 +38,38 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        taskRecyclerView = binding.taskRecyclerView
+        categoryRecyclerView = binding.categoryRecyclerView
 
-        addTaskButton = binding.addTaskButton
+        addCategoryButton = binding.addCategoryButton
 
 
-        taskDAO = TaskDAO(this)
-        taskList = taskDAO.findAll()
+        categoryDAO = CategoryDAO(this)
+        categoryList = categoryDAO.findAll()
 
-        taskAdapter = TaskAdapter(emptyList(), {
-            showAlertDialog()
-            Toast.makeText(this, "Click en tarea: ${taskList[it].name}", Toast.LENGTH_SHORT).show()
+        categoryAdapter = CategoryAdapter(emptyList(), {
+           // showAlertDialog()
+            Toast.makeText(this, "Click en tarea: ${categoryList[it].name}", Toast.LENGTH_SHORT).show()
 
-        }, { position, newTaskName ->
-            val task = taskList[position]
-            task.name = newTaskName
-            taskDAO.update(task)
+        }, { position, newCategoryName ->
+            val category = categoryList[position]
+            category.name = newCategoryName
+            categoryDAO.update(category)
             loadData()
         }, {
-            taskDAO.delete(taskList[it])
+            categoryDAO.delete(categoryList[it])
             Toast.makeText(this, "Tarea borrada correctamente", Toast.LENGTH_SHORT).show()
             loadData()
         }, {
-            val task = taskList[it]
-            task.done = !task.done
-            taskDAO.update(task)
+            val category = categoryList[it]
+            category.priority = category.priority
+            categoryDAO.update(category)
             loadData()
         })
-        binding.taskRecyclerView.adapter = taskAdapter
-        binding.taskRecyclerView.layoutManager=LinearLayoutManager(this)
+        binding.categoryRecyclerView.adapter = categoryAdapter
+        binding.categoryRecyclerView.layoutManager=GridLayoutManager(this,2)
 
-        binding.addTaskButton.setOnClickListener {
-            val intent = Intent(this, TaskActivity::class.java)
+        binding.addCategoryButton.setOnClickListener {
+            val intent = Intent(this, CategoryActivity::class.java)
             startActivity(intent)
         }
 
@@ -78,17 +79,17 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        taskList = taskDAO.findAll()
+        categoryList = categoryDAO.findAll()
 
-        taskAdapter.updateData(taskList)
+        categoryAdapter.updateData(categoryList)
     }
     private fun loadData() {
-        taskList = taskDAO.findAll()
+        categoryList = categoryDAO.findAll()
 
-       taskAdapter.updateData(taskList)
+        categoryAdapter.updateData(categoryList)
     }
 
-    private fun showAlertDialog() {
+   /* private fun showAlertDialog() {
         val builder = AlertDialog.Builder(this)
 
         val customLayout: View = layoutInflater.inflate(R.layout.custom_view_layout, null)
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
         val dialog = builder.create()
         dialog.show()
-    }
+    }*/
 
    /* private fun navigateToDetail(superhero: Task) {
         Log.d("MainActivity", "Navigating to detail for superhero: ${superhero.name}, ID: ${superhero.id}")
