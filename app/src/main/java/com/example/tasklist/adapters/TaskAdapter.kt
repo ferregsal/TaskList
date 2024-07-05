@@ -65,6 +65,7 @@ class TaskAdapter(
         fun render(task: Task) {
             binding.taskTextView.text = task.name
             binding.taskEditText.setText(task.name)
+            binding.taskCheckBox.isChecked = task.done
 
         }
 

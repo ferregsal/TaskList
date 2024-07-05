@@ -7,11 +7,14 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.BaseColumns
+import android.view.Menu
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var categoryList: List<Category>
     lateinit var categoryDAO: CategoryDAO
     lateinit var deleteLayout:LinearLayout
+    var searchText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -46,9 +50,13 @@ class MainActivity : AppCompatActivity() {
         categoryDAO = CategoryDAO(this)
         categoryList = categoryDAO.findAll()
 
-        categoryAdapter = CategoryAdapter(emptyList(), {
+
+        categoryAdapter = CategoryAdapter(emptyList(), {position ->
+            navigateToDetail(categoryList[position])
+
            // showAlertDialog()
-            Toast.makeText(this, "Click en tarea: ${categoryList[it].name}", Toast.LENGTH_SHORT).show()
+          Toast.makeText(this, "Click en tarea: ${categoryList[position].name}", Toast.LENGTH_SHORT).show()
+
 
         }, { position, newCategoryName ->
             val category = categoryList[position]
@@ -88,20 +96,63 @@ class MainActivity : AppCompatActivity() {
 
         categoryAdapter.updateData(categoryList)
     }
+    private fun applyFilters() {
 
-   /* private fun showAlertDialog() {
-        val builder = AlertDialog.Builder(this)
-
-        val customLayout: View = layoutInflater.inflate(R.layout.custom_view_layout, null)
-        builder.setView(customLayout)
-
-        builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
-            // Opcional: Realizar acciones adicionales cuando se pulse "OK"
+        if (searchText != null) {
+            categoryList = categoryDAO.findAll().filter {
+                it.name.contains(searchText!!, true)
+            }
         }
 
-        val dialog = builder.create()
-        dialog.show()
-    }*/
+        categoryAdapter.updateData(categoryList)
+
+    }
+        fun navigateToDetail(category: Category) {
+            val intent = Intent(this, DetailActivity::class.java)
+             intent.putExtra(BaseColumns._ID, category.id)
+            startActivity(intent)
+
+        }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_main_menu, menu)
+
+        val searchViewItem = menu.findItem(R.id.menu_search)
+        val searchView = searchViewItem.actionView as SearchView
+
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchText = newText
+                applyFilters()
+                return true
+            }
+
+        })
+
+        return true
+    }
+
+
+        /* private fun showAlertDialog() {
+             val builder = AlertDialog.Builder(this)
+
+             val customLayout: View = layoutInflater.inflate(R.layout.custom_view_layout, null)
+             builder.setView(customLayout)
+
+             builder.setPositiveButton("OK") { dialog: DialogInterface?, which: Int ->
+                 // Opcional: Realizar acciones adicionales cuando se pulse "OK"
+             }
+
+             val dialog = builder.create()
+             dialog.show()
+         }*/
 
    /* private fun navigateToDetail(superhero: Task) {
         Log.d("MainActivity", "Navigating to detail for superhero: ${superhero.name}, ID: ${superhero.id}")

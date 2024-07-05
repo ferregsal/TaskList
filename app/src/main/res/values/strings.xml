@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TaskList</string>
+
+    <string name="menu_search">Search</string>
+    <string name="menu_next">Next</string>
+    <string name="menu_prev">Previous</string>
+    <string name="menu_favorite">Favorite</string>
+    <string name="menu_share">Share</string>
 </resources>

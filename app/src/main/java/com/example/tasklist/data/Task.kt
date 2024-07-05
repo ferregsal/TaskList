@@ -17,7 +17,7 @@ data class Task(var id: Int, var name: String, var done: Boolean = false, var ca
                     "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMN_NAME_TITLE TEXT," +
                     "$COLUMN_NAME_DONE INTEGER,"+
-                    "$COLUMN_NAME_CATEGORY_ID INTEGER,"+
+                    "$COLUMN_NAME_CATEGORY_ID INTEGER FOREIGN KEY ,"+
                     "$COLUMN_NAME_PRIORITY INTEGER)"
 
         const val SQL_DROP_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"

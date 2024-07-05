@@ -2,6 +2,7 @@
 import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
+import android.util.Log
 import com.example.tasklist.data.Task
 import com.example.tasklist.utils.DatabaseManager
 
@@ -36,6 +37,7 @@ class TaskDAO(context: Context) {
             "${BaseColumns._ID} = ${task.id}",
             null
         )
+        Log.i("Database", updatedRows.toString())
     }
 
     fun delete(task: Task) {
@@ -83,6 +85,36 @@ class TaskDAO(context: Context) {
             Task.TABLE_NAME,                        // The table to query
             projection,                             // The array of columns to return (pass null to get all)
             null,                            // The columns for the WHERE clause
+            null,                         // The values for the WHERE clause
+            null,                            // don't group the rows
+            null,                             // don't filter by row groups
+            "${Task.COLUMN_NAME_DONE} != 0",                           // The sort order
+        )
+
+        var tasks = mutableListOf<Task>()
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_TITLE))
+            val done = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_DONE)) == 1
+            val categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_CATEGORY_ID))
+            val priority = cursor.getInt(cursor.getColumnIndexOrThrow(Task.COLUMN_NAME_PRIORITY))
+            val task = Task(id, name, done, categoryId, priority)
+            tasks.add(task)
+        }
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
+    fun findAllByCategoryId(id: Int) : List<Task> {
+        val db = databaseManager.readableDatabase
+
+        val projection = arrayOf(BaseColumns._ID, Task.COLUMN_NAME_TITLE, Task.COLUMN_NAME_DONE, Task.COLUMN_NAME_CATEGORY_ID, Task.COLUMN_NAME_PRIORITY )
+
+        val cursor = db.query(
+            Task.TABLE_NAME,                        // The table to query
+            projection,                             // The array of columns to return (pass null to get all)
+            "${Task.COLUMN_NAME_CATEGORY_ID} = $id",                            // The columns for the WHERE clause
             null,                         // The values for the WHERE clause
             null,                            // don't group the rows
             null,                             // don't filter by row groups
